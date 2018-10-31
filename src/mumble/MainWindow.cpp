@@ -231,9 +231,10 @@ void MainWindow::createActions() {
 #endif
 }
 
-void MainWindow::setupGui()  {
+void MainWindow::setupGui()  { //initializes the gui
 	updateWindowTitle();
-	setCentralWidget(qtvUsers);
+    setCentralWidget(qtvUsers);  //first time qtvUsers is mentioned in this file
+    //setCentralWidget(qteLog);
 	setAcceptDrops(true);
 
 #ifdef Q_OS_MAC
@@ -247,7 +248,7 @@ void MainWindow::setupGui()  {
 	qteLog->setFrameStyle(QFrame::NoFrame);
 #endif
 
-	LogDocument *ld = new LogDocument(qteLog);
+    LogDocument *ld = new LogDocument(qteLog); //log document contains all the chat logs (write these to server?)
 	qteLog->setDocument(ld);
 
 	qteLog->document()->setMaximumBlockCount(g.s.iMaxLogBlocks);
@@ -966,9 +967,9 @@ void MainWindow::setOnTop(bool top) {
 }
 
 void MainWindow::setupView(bool toggle_minimize) {
-	bool showit = ! g.s.bMinimalView;
+    bool showit = ! g.s.bMinimalView; //is the MainWindow hidden or not?
 
-	switch (g.s.wlWindowLayout) {
+    switch (g.s.wlWindowLayout) { //which window layout is being used?
 		case Settings::LayoutClassic:
 			removeDockWidget(qdwLog);
 			addDockWidget(Qt::LeftDockWidgetArea, qdwLog);

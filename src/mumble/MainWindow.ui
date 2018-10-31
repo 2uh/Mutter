@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>435</height>
+    <width>513</width>
+    <height>487</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
-   <string>Mumble</string>
+   <string>Mutter</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AnimatedDocks</set>
@@ -20,6 +26,17 @@
    <bool>true</bool>
   </property>
   <widget class="UserView" name="qtvUsers">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <family>Sans Serif</family>
+    </font>
+   </property>
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
    </property>
@@ -47,8 +64,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>671</width>
-     <height>21</height>
+     <width>513</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="qmConfig">
@@ -96,12 +113,6 @@
    <addaction name="qmHelp"/>
   </widget>
   <widget class="QDockWidget" name="qdwLog">
-   <property name="minimumSize">
-    <size>
-     <width>250</width>
-     <height>93</height>
-    </size>
-   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -124,12 +135,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="qdwChat">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="toolTip">
     <string/>
    </property>
@@ -146,12 +151,6 @@
     <number>1</number>
    </attribute>
    <widget class="ChatbarTextEdit" name="qteChat">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
