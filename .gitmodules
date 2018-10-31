@@ -27,4 +27,4 @@
 	url = https://github.com/mumble-voip/rnnoise.git
 [submodule "themes/Mumble"]
 	path = themes/Mumble
-	url = https://github.com/mumble-voip/mumble-theme.git
+	url = https://github.com/2uh/mumble-theme.git
