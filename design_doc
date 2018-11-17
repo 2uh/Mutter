@@ -1,0 +1,56 @@
+Tyler’s List of Completed Tasks:
+Commands for Ubuntu
+-Building Mumble: 
+cd Mumble/release
+./mumble
+-Running Inkscape:
+flatpak run org.inkscape.Inkscape
+Graphics & Icon alterations using Inkscape
+~/Qt/Tools/QtCreator/bin/qtcreator
+call: qtcreator
+GUI Folder: mumble/forms/MainWindow.ui
+Default GUI Size: [ (0, 0), (671, 435) ]
+Database
+- Research type of cryptography Mumble uses to authenticate communication….
+- If Mumble uses cryptography, try to piggy-back off security and store information in database.
+- Consult Mumble WIKI to identify security features.
+Problem: Mumble currently transmits information securely. However, our database needs to store information at the same level of security as transmission.
+Solution: Either use built-in security to store messages inside a log-file on database, or develop a handshake / encryption method to safely store information.
+Security: Uses TLS (Transport Layer Security) to encrypt all communication over network.  Utilizing UDP encrypted messages with AES in OCB mode (AES? Advanced Encryption Security: Very secure means of encrypting information and sending over a network.  Approved by NSA and is a common means of security.  Uses the same key to encrypt and decrypt information. OCB mode? A style of encryption that authenticates and encrypts information.  More-or-less, this mode provides message authentication and privacy.)
+Murmur server uses 64738 port for TCP and UDP communication by default.
+Server Hosting: Mumble servers can either be rented or hosted locally.  We would want to host the server locally.  To host locally, we need to download Murmur and edit the configuration file, which holds server’s name, user authentication, audio quality restrictions, and port.  
+After configuration file is implemented, grant our user names to become administrators – giving us the rights to add, edit, manage users, and view server information.  
+Our plan should be to host a local server that we only have access to.  This will be the server that accesses our database (we need to setup), and stores/logs all text communication.  If we get a functional local-server hosted that implements our proposed chatlog, then we can start starting planning how we could issue a system-wide feature – understanding how our database will need to be scaled.  
+Attempts
+Establishing a new mumble server using the virtual server provided by Dr. Brylow has not been working properly.  Mumble’s “add new server” function displays three attributes: IP address, server name, username.  After logging into server through morbius, we pinged server to find IP address.  After all information was input, we attempted logging in, but received connection failure, followed by a connection time-out.  Still trying to resolve issues.  We believe there is some additional setup required on the server side. 
+Yes, we need to configure our virtual server.....
+To reconfigure our server we need to access the network config file.  Use the following command to access file: sudo nano /etc/network/interfaces.  This opens the config file where we need to change the dhcp setting to a static IP address.  This shouldn’t be a huge problem considering our server is running in parallel with the morbius system, but if the network was to restart or our virtual machine was to crash or reboot, our IP address may change.  To prevent this problem, we can configure the file to be a static IP address that will not change.  
+Change the following & add the following lines of code:  *:  indicates code insertion 
+Iface <variable> inet *static*
+*address <insert IP address>*
+*netmask <insert IP address>*
+*network <insert IP address>*
+*broadcst <insert IP address>*
+*gateway <insert IP address>*
+*dns-nameservers <insert IP address>*
+Is port 64738 open on virtual server (mumble)??
+Yes, use zardoz.mscs.mu.edu to connect through port 64738.  Mumble issues certificates but our server does not validate them.  Instead, the user collects the assigned certificate but nothing is authenticated server-side.  Could implement a look-up table and only validate group mutter as administrators.  
+Server also fails to use UDP for communication.  Instead it switches to TCP.  Not a huge issue considering our traffic will be extremely low!  But something to keep in mind for the future.
+Grabbing information from chat application for storing on Database: 
+Chat logs are stored in an object called LogDocument.  This is a variable that is allocated to hold a max amount of characters/text.  We can use this object to write information to server.  
+How would we do this?  Depending on how the database is setup.  We may need to step through object and store the results sequentially in the database, or we may be able to store/organize data based on these objects (LogDocuments).  If we can store the objects, then the lookup function could simply incorporate the last ‘X’ number of logs or size of logs.  We could then transfer these objects back into chat log when user signs back into Mumble application. 
+LogDocuments are found in MainWindow cpp file!
+
+How to setup a database that will store user chat information???
+We can download sqlbrowser onto our local machines.  This light weight application will open any .sqlite file that mumble stores.  It opens in an easy to view fashion, listing all the tables under a column and expanding all sub categories, listing all the attributes associated with the entity.  The current database holds records such as... blobs, certificates, comments, filtered, channels, friends, volume, ect.... These are updated every time the mumble client is opened.  We can prove this by the save-time record.  Now that we know mumble sends information and updates the database automatically, we should be able to implement the message-based database accordingly.  The problem we might encounter will be the following: finding where the messages are sent from, i.e. where the messages are passed to (will they stop at the database or be delivered straight to the receiver from the sender).  So, the first order of steps will be to find the code that sends the object files from the .cpp file window.ui, and understand how and where it sends the object file.  Theoretically, we might be able to add a line of code that sends the information twice, without having to alter the underlying system.  This might not be the most cost effective or optimized way to store information, but this will give us a good direction.  (FIND AN EXAMPLE OF THE LISTED DATABASE ENTRIES FROM ABOVE AND COPY THE LINES OF CODE THAT ARE USED TO SEND AND STORE INFORMATION TO DATABASE).
+
+Establishing database on Linux:
+Install sqlite on server.  
+Design the construct of database: attribute names, sequences, users.
+Understand the object files sent from mutter client.
+
+Logging into Morbius/Mumble from Ubuntu Machine
+Ssh thackel@morbius.mscs.mu.edu   -----> 00xxxxxxx
+Ssh Mumble  ------------------------------------> TylerTyler
+Mumble.xinu.mu.edu (192.168.6.173): Virtual server established on Marquette’s network.
+ 
