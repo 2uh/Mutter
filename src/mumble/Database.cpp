@@ -256,6 +256,19 @@ void Database::setMessage(const QString &hash) {
     execQueryAndLogFailure(query);
 }
 
+//get all information from message_log table
+QStringList Database::getMessages() {
+    QList<QString> qsl;
+    QSqlQuery query(db);
+
+    query.prepare(QLatin1String("SELECT `hash` FROM `message_log`"));
+    execQueryAndLogFailure(query);
+    while (query.next()) {
+        qsl << query.value(0).toString();
+    }
+    return qsl;
+}
+
 void Database::setUserLocalVolume(const QString &hash, float volume) {
 	QSqlQuery query(db);
 

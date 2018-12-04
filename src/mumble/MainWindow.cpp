@@ -2831,6 +2831,39 @@ void MainWindow::serverConnected() {
 	qmUser_aboutToShow();
 	on_qmConfig_aboutToShow();
 
+    // POPULATE OLD CHAT MESSAGES
+    //::TextMessage *texm = new ::TextMessage(this, tr("Gamer: "));
+
+    QStringList mess = g.db->getMessages();
+    for(int i = 0; i < mess.size(); i++) {
+        g.l->log(Log::TextMessage, mess.at(i), tr("Argument 2"), true);
+    }
+    //delete texm;
+
+//    void MainWindow::openTextMessageDialog(ClientUser *p) {
+//        unsigned int session = p->uiSession;
+
+//        ::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
+//        int res = texm->exec();
+
+//        // Try to get find the user using the session id.
+//        // This will return NULL if the user disconnected while typing the message.
+//        p = ClientUser::get(session);
+
+//        if (p && (res == QDialog::Accepted)) {
+//            QString msg = texm->message();
+
+//            if (! msg.isEmpty()) {
+//                g.sh->sendUserTextMessage(p->uiSession, msg);
+//                g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true);
+//                //QString hash = QString::fromStdString("Mumble");
+//                g.db->(msg);
+//            }
+//        }
+//        delete texm;
+//    }
+
+
 #ifdef Q_OS_WIN
 	TaskList::addToRecentList(g.s.qsLastServer, uname, host, port);
 #endif
