@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
+    <width>476</width>
     <height>334</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Messages</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <layout class="QVBoxLayout">
    <item>

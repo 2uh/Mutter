@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>611</height>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 12pt &quot;Terminus&quot;;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
    <item row="1" column="0" rowspan="3">
@@ -32,6 +35,9 @@
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="qliTheme">
+        <property name="styleSheet">
+         <string notr="true">font: 75 12pt &quot;Terminus&quot;;</string>
+        </property>
         <property name="text">
          <string>Theme</string>
         </property>
@@ -355,6 +361,9 @@
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QGroupBox" name="qgbLayout">
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;Terminus&quot;;</string>
+     </property>
      <property name="title">
       <string>Layout</string>
      </property>

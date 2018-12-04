@@ -970,13 +970,21 @@ void MainWindow::setupView(bool toggle_minimize) {
     bool showit = ! g.s.bMinimalView; //is the MainWindow hidden or not?
 
     switch (g.s.wlWindowLayout) { //which window layout is being used?
-		case Settings::LayoutClassic:
-			removeDockWidget(qdwLog);
-			addDockWidget(Qt::LeftDockWidgetArea, qdwLog);
-			qdwLog->show();
-			splitDockWidget(qdwLog, qdwChat, Qt::Vertical);
+        /*case Settings::LayoutClassic: //classic is originally Log on top of chat, and then users on the right half
+                                      //we want to change it to users on the left half and log on top of chat on the right
+            removeDockWidget(qdwLog); //removes the log
+            addDockWidget(Qt::LeftDockWidgetArea, qdwLog); //re-adds the log to the leftside
+            qdwLog->show(); //makes the log visible
+            splitDockWidget(qdwLog, qdwChat, Qt::Vertical); //splits the area allocated to the log vertically, giving the bottom to the chat
 			qdwChat->show();
-			break;
+            break;*/
+        case Settings::LayoutClassic:
+            removeDockWidget(qdwLog);
+            addDockWidget(Qt::RightDockWidgetArea, qdwLog);
+            qdwLog->show();
+            splitDockWidget(qdwLog, qdwChat, Qt::Vertical);
+            qdwChat->show();
+            break;
 		case Settings::LayoutStacked:
 			removeDockWidget(qdwLog);
 			addDockWidget(Qt::BottomDockWidgetArea, qdwLog);
@@ -1736,20 +1744,21 @@ void MainWindow::on_qaUserTextMessage_triggered() {
 	openTextMessageDialog(p);
 }
 
-void MainWindow::openTextMessageDialog(ClientUser *p) {
+void goingMainWindow::openTextMessageDialog(ClientUser *p) {
 	unsigned int session = p->uiSession;
 
 	::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
-	int res = texm->exec();
+    int res = texm->exec();going
 
 	// Try to get find the user using the session id.
 	// This will return NULL if the user disconnected while typing the message.
 	p = ClientUser::get(session);
 
 	if (p && (res == QDialog::Accepted)) {
+        //this might be the thing to work with
 		QString msg = texm->message();
 
-		if (! msg.isEmpty()) {
+        if (! msg.isEmpty()) {
 			g.sh->sendUserTextMessage(p->uiSession, msg);
 			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true);
 		}

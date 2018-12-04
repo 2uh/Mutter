@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>513</width>
-    <height>487</height>
+    <height>495</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,8 +16,20 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="font">
+   <font>
+    <family>Terminus (TTF)</family>
+    <pointsize>11</pointsize>
+    <weight>7</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Mutter</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AnimatedDocks</set>
@@ -26,6 +38,9 @@
    <bool>true</bool>
   </property>
   <widget class="UserView" name="qtvUsers">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -34,7 +49,11 @@
    </property>
    <property name="font">
     <font>
-     <family>Sans Serif</family>
+     <family>Terminus (TTF)</family>
+     <pointsize>11</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
     </font>
    </property>
    <property name="contextMenuPolicy">
@@ -42,6 +61,9 @@
    </property>
    <property name="acceptDrops">
     <bool>true</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
    </property>
    <property name="dragEnabled">
     <bool>true</bool>
@@ -65,7 +87,7 @@
      <x>0</x>
      <y>0</y>
      <width>513</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="qmConfig">
@@ -113,6 +135,21 @@
    <addaction name="qmHelp"/>
   </widget>
   <widget class="QDockWidget" name="qdwLog">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="font">
+    <font>
+     <family>Terminus (TTF)</family>
+     <pointsize>12</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 12pt &quot;Terminus (TTF)&quot;;</string>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -120,9 +157,15 @@
     <string>Log</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="LogTextBrowser" name="qteLog">
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
     <property name="contextMenuPolicy">
      <enum>Qt::CustomContextMenu</enum>
     </property>
@@ -135,11 +178,23 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="qdwChat">
+   <property name="font">
+    <font>
+     <family>Terminus (TTF)</family>
+     <pointsize>11</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
    <property name="toolTip">
     <string/>
    </property>
    <property name="whatsThis">
     <string>This is the chatbar&lt;br /&gt;If you enter text here and then press enter the text is sent to the user or channel that was selected. If nothing is selected the message is sent to your current channel.</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
@@ -148,9 +203,15 @@
     <string>Chatbar</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="ChatbarTextEdit" name="qteChat">
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
     <property name="maximumSize">
      <size>
       <width>16777215</width>
