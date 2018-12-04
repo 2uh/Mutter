@@ -304,7 +304,8 @@ Settings::Settings() {
 	bFilterHidesEmptyChannels = true;
 	bFilterActive = false;
 
-	wlWindowLayout = LayoutClassic;
+    wlWindowLayout = LayoutClassic;
+    //wlWindowLayout = LayoutHybrid;
 	bShowContextMenuInMenuBar = false;
 
 	ssFilter = ShowReachable;

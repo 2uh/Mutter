@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
+  </property>
   <layout class="QVBoxLayout">
    <item>
     <widget class="QGroupBox" name="qgbInterfaces">
@@ -561,7 +564,11 @@
        <widget class="QLabel" name="qlBitrate">
         <property name="font">
          <font>
-          <italic>true</italic>
+          <family>Terminus (TTF)</family>
+          <pointsize>11</pointsize>
+          <weight>7</weight>
+          <italic>false</italic>
+          <bold>false</bold>
          </font>
         </property>
         <property name="toolTip">
@@ -904,15 +911,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>MUComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/MUComboBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>AudioBar</class>
    <extends>QWidget</extends>
    <header>AudioStats.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>MUComboBox</class>
-   <extends>QComboBox</extends>
-   <header>widgets/MUComboBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

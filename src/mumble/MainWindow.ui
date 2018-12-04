@@ -6,56 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>435</height>
+    <width>513</width>
+    <height>495</height>
    </rect>
   </property>
-  <property name="palette">
-   <palette>
-    <active>
-     <colorrole role="Mid">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>184</red>
-        <green>184</green>
-        <blue>184</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </active>
-    <inactive>
-     <colorrole role="Mid">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>184</red>
-        <green>184</green>
-        <blue>184</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </inactive>
-    <disabled>
-     <colorrole role="Mid">
-      <brush brushstyle="SolidPattern">
-       <color alpha="255">
-        <red>184</red>
-        <green>184</green>
-        <blue>184</blue>
-       </color>
-      </brush>
-     </colorrole>
-    </disabled>
-   </palette>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="font">
    <font>
-    <weight>75</weight>
-    <bold>true</bold>
-    <underline>false</underline>
+    <family>Terminus (TTF)</family>
+    <pointsize>11</pointsize>
+    <weight>7</weight>
+    <italic>false</italic>
+    <bold>false</bold>
    </font>
   </property>
   <property name="windowTitle">
-   <string>Mumble</string>
+   <string>Mutter</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <property name="autoFillBackground">
    <bool>true</bool>
@@ -67,11 +41,32 @@
    <bool>true</bool>
   </property>
   <widget class="UserView" name="qtvUsers">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <family>Terminus (TTF)</family>
+     <pointsize>11</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
    <property name="contextMenuPolicy">
     <enum>Qt::CustomContextMenu</enum>
    </property>
    <property name="acceptDrops">
     <bool>true</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
    </property>
    <property name="dragEnabled">
     <bool>true</bool>
@@ -94,8 +89,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>671</width>
-     <height>20</height>
+     <width>513</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="qmConfig">
@@ -143,11 +138,20 @@
    <addaction name="qmHelp"/>
   </widget>
   <widget class="QDockWidget" name="qdwLog">
-   <property name="minimumSize">
-    <size>
-     <width>250</width>
-     <height>93</height>
-    </size>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="font">
+    <font>
+     <family>Terminus (TTF)</family>
+     <pointsize>12</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 12pt &quot;Terminus (TTF)&quot;;</string>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
@@ -156,9 +160,15 @@
     <string>Log</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="LogTextBrowser" name="qteLog">
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
+    </property>
     <property name="contextMenuPolicy">
      <enum>Qt::CustomContextMenu</enum>
     </property>
@@ -171,17 +181,23 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="qdwChat">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
+   <property name="font">
+    <font>
+     <family>Terminus (TTF)</family>
+     <pointsize>11</pointsize>
+     <weight>7</weight>
+     <italic>false</italic>
+     <bold>false</bold>
+    </font>
    </property>
    <property name="toolTip">
     <string/>
    </property>
    <property name="whatsThis">
     <string>This is the chatbar&lt;br /&gt;If you enter text here and then press enter the text is sent to the user or channel that was selected. If nothing is selected the message is sent to your current channel.</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
@@ -190,14 +206,14 @@
     <string>Chatbar</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="ChatbarTextEdit" name="qteChat">
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
+    <property name="minimumSize">
+     <size>
+      <width>70</width>
+      <height>70</height>
+     </size>
     </property>
     <property name="maximumSize">
      <size>

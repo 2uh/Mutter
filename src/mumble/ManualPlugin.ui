@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Manual Mumble Positional Audio</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QHBoxLayout" name="qhlHorizontal" stretch="0,0">

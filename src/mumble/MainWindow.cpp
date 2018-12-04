@@ -231,9 +231,10 @@ void MainWindow::createActions() {
 #endif
 }
 
-void MainWindow::setupGui()  {
+void MainWindow::setupGui()  { //initializes the gui
 	updateWindowTitle();
-	setCentralWidget(qtvUsers);
+    setCentralWidget(qtvUsers);  //first time qtvUsers is mentioned in this file
+    //setCentralWidget(qteLog);
 	setAcceptDrops(true);
 
 #ifdef Q_OS_MAC
@@ -247,7 +248,7 @@ void MainWindow::setupGui()  {
 	qteLog->setFrameStyle(QFrame::NoFrame);
 #endif
 
-	LogDocument *ld = new LogDocument(qteLog);
+    LogDocument *ld = new LogDocument(qteLog); //log document contains all the chat logs (write these to server?)
 	qteLog->setDocument(ld);
 
 	qteLog->document()->setMaximumBlockCount(g.s.iMaxLogBlocks);
@@ -966,16 +967,24 @@ void MainWindow::setOnTop(bool top) {
 }
 
 void MainWindow::setupView(bool toggle_minimize) {
-	bool showit = ! g.s.bMinimalView;
+    bool showit = ! g.s.bMinimalView; //is the MainWindow hidden or not?
 
-	switch (g.s.wlWindowLayout) {
-		case Settings::LayoutClassic:
-			removeDockWidget(qdwLog);
-			addDockWidget(Qt::LeftDockWidgetArea, qdwLog);
-			qdwLog->show();
-			splitDockWidget(qdwLog, qdwChat, Qt::Vertical);
+    switch (g.s.wlWindowLayout) { //which window layout is being used?
+        /*case Settings::LayoutClassic: //classic is originally Log on top of chat, and then users on the right half
+                                      //we want to change it to users on the left half and log on top of chat on the right
+            removeDockWidget(qdwLog); //removes the log
+            addDockWidget(Qt::LeftDockWidgetArea, qdwLog); //re-adds the log to the leftside
+            qdwLog->show(); //makes the log visible
+            splitDockWidget(qdwLog, qdwChat, Qt::Vertical); //splits the area allocated to the log vertically, giving the bottom to the chat
 			qdwChat->show();
-			break;
+            break;*/
+        case Settings::LayoutClassic:
+            removeDockWidget(qdwLog);
+            addDockWidget(Qt::RightDockWidgetArea, qdwLog);
+            qdwLog->show();
+            splitDockWidget(qdwLog, qdwChat, Qt::Vertical);
+            qdwChat->show();
+            break;
 		case Settings::LayoutStacked:
 			removeDockWidget(qdwLog);
 			addDockWidget(Qt::BottomDockWidgetArea, qdwLog);
@@ -1739,16 +1748,16 @@ void MainWindow::openTextMessageDialog(ClientUser *p) {
 	unsigned int session = p->uiSession;
 
 	::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
-	int res = texm->exec();
+    int res = texm->exec();
 
 	// Try to get find the user using the session id.
 	// This will return NULL if the user disconnected while typing the message.
 	p = ClientUser::get(session);
 
-	if (p && (res == QDialog::Accepted)) {
+    if (p && (res == QDialog::Accepted)) {
         QString msg = texm->message();
 
-		if (! msg.isEmpty()) {
+        if (! msg.isEmpty()) {
 			g.sh->sendUserTextMessage(p->uiSession, msg);
 			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true);
             //QString hash = QString::fromStdString("Mumble");

@@ -10,14 +10,29 @@
     <height>366</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Terminus (TTF)</family>
+    <pointsize>12</pointsize>
+    <weight>7</weight>
+    <italic>false</italic>
+    <bold>false</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Mumble Server Connect</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 12pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="ServerView" name="qtwServers">
      <property name="contextMenuPolicy">
       <enum>Qt::CustomContextMenu</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
      </property>
      <property name="dragEnabled">
       <bool>true</bool>
@@ -62,6 +77,9 @@
    </item>
    <item>
     <widget class="QDialogButtonBox" name="qdbbButtonBox">
+     <property name="styleSheet">
+      <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
+     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>

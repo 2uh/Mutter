@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Mumble Configuration</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
+  </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
@@ -79,7 +82,7 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="1" rowspan="1">
+   <item row="0" column="1">
     <widget class="QStackedWidget" name="qswPages">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -91,9 +94,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="mumble.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>dialogButtonBox</sender>

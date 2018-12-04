@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>546</width>
-    <height>669</height>
+    <height>708</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -87,7 +90,7 @@
          <string>&lt;b&gt;This is the output device to use for audio.&lt;/b&gt;</string>
         </property>
         <property name="sizeAdjustPolicy">
-         <enum>MUComboBox::AdjustToMinimumContentsLength</enum>
+         <enum>QComboBox::AdjustToContents</enum>
         </property>
         <property name="minimumContentsLength">
          <number>16</number>
@@ -714,6 +717,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MUComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widgets/MUComboBox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>qcbSystem</tabstop>
   <tabstop>qcbDevice</tabstop>
@@ -730,13 +740,6 @@
   <tabstop>qsPacketDelay</tabstop>
   <tabstop>qsPacketLoss</tabstop>
  </tabstops>
- <customwidgets>
-  <customwidget>
-   <class>MUComboBox</class>
-   <extends>QComboBox</extends>
-   <header>widgets/MUComboBox.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
