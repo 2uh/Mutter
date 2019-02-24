@@ -4,6 +4,7 @@
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
 
 #include "mumble_pch.hpp"
+#include <iostream>
 
 #include "Database.h"
 
@@ -35,11 +36,14 @@ static bool execQueryAndLogFailure(QSqlQuery &query, const QString &queryString)
 	return true;
 }
 
+QStringList tableNames;
+
 
 Database::Database(const QString &dbname) {
 	db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"), dbname);
 	QSettings qs;
 	QStringList datapaths;
+    tableNames = QStringList();
 	int i;
 
     datapaths << g.qdBasePath.absolutePath();
@@ -154,7 +158,7 @@ Database::Database(const QString &dbname) {
 
     //INSERTED  NEW TABLE IN SQLITE DATABASE
     //IF MESSAGE TABLE IS NOT IN DATABASE, CREATE!
-    execQueryAndLogFailure(query, QLatin1String("CREATE TABLE IF NOT EXISTS `message_log` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `hash` TEXT)"));
+
 
 	execQueryAndLogFailure(query, QLatin1String("VACUUM"));
 
@@ -247,22 +251,55 @@ bool Database::isLocalMuted(const QString &hash) {
 	return query.next();
 }
 
+//check if table exists in database
+bool Database::addTable(QString table) {
+    if(tableNames.size() < 1) {
+        tableNames = db.tables();
+    }
+
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+
+    for(int i = 0; i < tableNames.size(); i++) {
+        if(QString::compare(tableNames.at(i), table) == 0) {
+            std::cout << table.toLocal8Bit().constData() << " table already exists" << std::endl;
+            return true;
+        }
+    }
+
+    QSqlQuery query(db);
+    std::cout << "Adding " << table.toLocal8Bit().constData() << " table to database." << std::endl;
+    QString queryString = QLatin1String("CREATE TABLE IF NOT EXISTS ") + table + QLatin1String("(`id` INTEGER PRIMARY KEY AUTOINCREMENT, `hash` TEXT)");
+    execQueryAndLogFailure(query, queryString);
+
+    return false;
+}
+
 //insert values into columns of message table
-void Database::setMessage(const QString &hash) {
+void Database::setMessage(QString table, const QString &hash) {
+    QSqlQuery query(db);
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    QString queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" ('hash') VALUES('") + hash + QLatin1String("')");
+    execQueryAndLogFailure(query, queryString);
+}
+
+bool Database::isTable(QString table) {
     QSqlQuery query(db);
 
-    query.prepare(QLatin1String("INSERT INTO `message_log` (`hash`) VALUES (?)"));
-    query.addBindValue(hash);
-    execQueryAndLogFailure(query);
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    QString queryString = QLatin1String("SELECT 'hash' FROM '") + table + QLatin1String("'");
+    if(execQueryAndLogFailure(query, queryString))
+        return true;
+    return false;
 }
 
 //get all information from message_log table
-QStringList Database::getMessages() {
+QStringList Database::getMessages(QString table) {
     QList<QString> qsl;
     QSqlQuery query(db);
 
-    query.prepare(QLatin1String("SELECT `hash` FROM `message_log`"));
-    execQueryAndLogFailure(query);
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    QString queryString = QLatin1String("SELECT 'hash' FROM '") + table + QLatin1String("'");
+    execQueryAndLogFailure(query, queryString);
     while (query.next()) {
         qsl << query.value(0).toString();
     }

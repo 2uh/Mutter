@@ -1747,6 +1747,11 @@ void MainWindow::on_qaUserTextMessage_triggered() {
 void MainWindow::openTextMessageDialog(ClientUser *p) {
 	unsigned int session = p->uiSession;
 
+    //Added by Mutter
+    QString host, uname, pw;
+    unsigned short port;
+    g.sh->getConnectionInfo(host,port,uname,pw);
+
 	::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
     int res = texm->exec();
 
@@ -1761,7 +1766,8 @@ void MainWindow::openTextMessageDialog(ClientUser *p) {
 			g.sh->sendUserTextMessage(p->uiSession, msg);
 			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true);
             //QString hash = QString::fromStdString("Mumble");
-            g.db->setMessage(msg);
+            g.db->addTable(host);
+            g.db->setMessage(host, msg);
 		}
 	}
 	delete texm;
@@ -1858,19 +1864,26 @@ void MainWindow::sendChatbarMessage(QString qsText) {
 #endif
 	qsText = TextMessage::autoFormat(qsText);
 
+    //Added by Mutter
+    QString host, uname, pw;
+    unsigned short port;
+    g.sh->getConnectionInfo(host,port,uname,pw);
+
 	if (!g.s.bChatBarUseSelection || p == NULL || p->uiSession == g.uiSession) {
 		// Channel message
 		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
 			c = ClientUser::get(g.uiSession)->cChannel;
 
+        g.db->addTable(host);
 		g.sh->sendChannelTextMessage(c->iId, qsText, false);
 		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), qsText), tr("Message to channel %1").arg(c->qsName), true);
-        g.db->setMessage(qsText); //INSERT BY MUMBLE TEAM
+        g.db->setMessage(host, qsText); //INSERT BY MUMBLE TEAM
 	} else {
 		// User message
+        g.db->addTable(host);
 		g.sh->sendUserTextMessage(p->uiSession, qsText);
 		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), qsText), tr("Message to %1").arg(p->qsName), true);
-        g.db->setMessage(qsText); //INSERT BY MUMBLE TEAM
+        g.db->setMessage(host, qsText); //INSERT BY MUMBLE TEAM
 	}
 
 	qteChat->clear();
@@ -2843,9 +2856,11 @@ void MainWindow::serverConnected() {
     // POPULATE OLD CHAT MESSAGES
     //::TextMessage *texm = new ::TextMessage(this, tr("Gamer: "));
 
-    QStringList mess = g.db->getMessages();
-    for(int i = 0; i < mess.size(); i++) {
-        g.l->log(Log::TextMessage, mess.at(i), tr("Argument 2"), true);
+    if(g.db->isTable(host)){
+        QStringList mess = g.db->getMessages(host);
+        for(int i = 0; i < mess.size(); i++) {
+            //g.l->log(Log::TextMessage, mess.at(i), tr("Argument 2"), true);
+        }
     }
     //delete texm;
 

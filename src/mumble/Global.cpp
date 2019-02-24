@@ -146,7 +146,7 @@ Global::Global() {
 		qs = new QSettings();
 #if defined(Q_OS_WIN)
 		if (! appdata.isEmpty())
-			qdBasePath.setPath(appdata);
+            qasePath.setPath(appdata);
 #else
 		migrateDataDir();
 #if QT_VERSION >= 0x050000
