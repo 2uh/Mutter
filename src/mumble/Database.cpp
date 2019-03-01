@@ -268,18 +268,20 @@ bool Database::addTable(QString table) {
 
     QSqlQuery query(db);
     std::cout << "Adding " << table.toLocal8Bit().constData() << " table to database." << std::endl;
-    QString queryString = QLatin1String("CREATE TABLE IF NOT EXISTS ") + table + QLatin1String("(`id` INTEGER PRIMARY KEY AUTOINCREMENT, `hash` TEXT)");
+    QString queryString = QLatin1String("CREATE TABLE IF NOT EXISTS ") + table + QLatin1String("(`id` INTEGER PRIMARY KEY AUTOINCREMENT, `hash` TEXT, `time` TEXT)");
     execQueryAndLogFailure(query, queryString);
 
     return false;
 }
 
 //insert values into columns of message table
-void Database::setMessage(QString table, const QString &hash) {
+void Database::setMessage(QString table, const QString &hash, QString timestamp) {
     QSqlQuery query(db);
     table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
-    QString queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" ('hash') VALUES('") + hash + QLatin1String("')");
+    QString queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" ('hash', 'time') VALUES('") + hash + QLatin1String("','") + timestamp + QLatin1String("')");
     execQueryAndLogFailure(query, queryString);
+    //queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" ('time') VALUES('") + timestamp + QLatin1String("')");
+    //execQueryAndLogFailure(query, queryString);
 }
 
 bool Database::isTable(QString table) {
@@ -293,17 +295,20 @@ bool Database::isTable(QString table) {
 }
 
 //get all information from message_log table
-QStringList Database::getMessages(QString table) {
-    QList<QString> qsl;
+QList<QStringList> Database::getMessages(QString table) {
+	QList<QStringList> outer;
     QSqlQuery query(db);
 
     table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
-    QString queryString = QLatin1String("SELECT 'hash' FROM '") + table + QLatin1String("'");
+    QString queryString = QLatin1String("SELECT `hash`, `time` FROM '") + table + QLatin1String("'"); // remember getting the time
     execQueryAndLogFailure(query, queryString);
     while (query.next()) {
-        qsl << query.value(0).toString();
+    	QStringList inner;
+		inner << query.value(1).toString(); // timestamp (note: we still need to add the attribute for this in the table)
+        inner << query.value(0).toString(); // msg
+		outer.append(inner);
     }
-    return qsl;
+    return outer;
 }
 
 void Database::setUserLocalVolume(const QString &hash, float volume) {
