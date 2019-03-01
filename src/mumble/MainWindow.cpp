@@ -2859,7 +2859,8 @@ void MainWindow::serverConnected() {
     if(g.db->isTable(host)){
         QStringList mess = g.db->getMessages(host);
         for(int i = 0; i < mess.size(); i++) {
-            //g.l->log(Log::TextMessage, mess.at(i), tr("Argument 2"), true);
+            //std::printf(mess.at(i));
+            g.l->log(Log::TextMessage, mess.at(i), tr("Argument 2"), true);
         }
     }
     //delete texm;

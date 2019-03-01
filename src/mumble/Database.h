@@ -38,6 +38,7 @@ class Database : public QObject {
         QStringList getMessages(QString table); //prototype (altered code by team MUTTER)
         bool addTable(QString table);
         bool isTable(QString table);
+        QString mapTableName(QString table);
 
 		bool isLocalIgnored(const QString &hash);
 		void setLocalIgnored(const QString &hash, bool ignored);

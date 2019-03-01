@@ -16,7 +16,7 @@
 
 static void logSQLError(const QSqlQuery &query) {
 	const QSqlError error(query.lastQuery());
-	qWarning() << "SQL Query failed" << query.lastQuery();
+    //qWarning() << "SQL Query failed" << query.lastQuery();
 	qWarning() << error.number() << query.lastError().text();
 }
 
@@ -251,13 +251,31 @@ bool Database::isLocalMuted(const QString &hash) {
 	return query.next();
 }
 
+QString Database::mapTableName(QString table) {
+    QString temp;
+    QStringList map = { QLatin1String("A"), QLatin1String("B"), QLatin1String("C"), QLatin1String("D"), QLatin1String("E"), QLatin1String("F"), QLatin1String("G"), QLatin1String("H"), QLatin1String("I"), QLatin1String("J") };
+    for(int i = 0; i < table.size(); i++) {
+        if(table.at(i).isDigit()){
+            temp.append(map.at((table.at(i).digitValue())));
+        }
+        else
+            temp.append(table.at(i));
+    }
+    return temp;
+}
+
 //check if table exists in database
 bool Database::addTable(QString table) {
+
     if(tableNames.size() < 1) {
         tableNames = db.tables();
     }
 
-    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    //std::cout << "AFTER PARSE: " << table.toLocal8Bit().constData() << std::endl;
+    if(table.at(0).isDigit()) {
+        table = mapTableName(table);
+    }
 
     for(int i = 0; i < tableNames.size(); i++) {
         if(QString::compare(tableNames.at(i), table) == 0) {
@@ -277,7 +295,10 @@ bool Database::addTable(QString table) {
 //insert values into columns of message table
 void Database::setMessage(QString table, const QString &hash) {
     QSqlQuery query(db);
-    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    if(table.at(0).isDigit()) {
+        table = mapTableName(table);
+    }
     QString queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" ('hash') VALUES('") + hash + QLatin1String("')");
     execQueryAndLogFailure(query, queryString);
 }
@@ -285,7 +306,10 @@ void Database::setMessage(QString table, const QString &hash) {
 bool Database::isTable(QString table) {
     QSqlQuery query(db);
 
-    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    if(table.at(0).isDigit()) {
+        table = mapTableName(table);
+    }
     QString queryString = QLatin1String("SELECT 'hash' FROM '") + table + QLatin1String("'");
     if(execQueryAndLogFailure(query, queryString))
         return true;
@@ -297,10 +321,12 @@ QStringList Database::getMessages(QString table) {
     QList<QString> qsl;
     QSqlQuery query(db);
 
-    table.replace(QRegExp(QString::fromStdString("[^A-Za-z]+")), QString::fromStdString(""));
-    QString queryString = QLatin1String("SELECT 'hash' FROM '") + table + QLatin1String("'");
+    table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    QString queryString = QLatin1String("SELECT (`hash`) FROM '") + table + QLatin1String("'");
     execQueryAndLogFailure(query, queryString);
+
     while (query.next()) {
+        qDebug() << query.value(0).toString();
         qsl << query.value(0).toString();
     }
     return qsl;
