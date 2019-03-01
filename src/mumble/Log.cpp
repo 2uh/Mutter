@@ -449,8 +449,8 @@ QString Log::validHtml(const QString &html, QTextCursor *tc) {
 	}
 }
 
-void Log::log(MsgType mt, const QString &console, const QString &terse, bool ownMessage) {
-	QDateTime dt = QDateTime::currentDateTime();
+void Log::log(MsgType mt, const QString &console, const QString &terse, bool ownMessage, QString timestamp) {
+	//QDateTime dt = timestamp.toDateTime();
 
 	int ignore = qmIgnore.value(mt);
 	if (ignore) {
@@ -473,12 +473,13 @@ void Log::log(MsgType mt, const QString &console, const QString &terse, bool own
 
 		tc.movePosition(QTextCursor::End);
 
+		/*
 		if (qdDate != dt.date()) {
 			qdDate = dt.date();
 			tc.insertBlock();
 			tc.insertHtml(tr("[Date changed to %1]\n").arg(Qt::escape(qdDate.toString(Qt::DefaultLocaleShortDate))));
 			tc.movePosition(QTextCursor::End);
-		}
+		}*/
 
 		if (plain.contains(QRegExp(QLatin1String("[\\r\\n]")))) {
 			QTextFrameFormat qttf;
@@ -489,7 +490,7 @@ void Log::log(MsgType mt, const QString &console, const QString &terse, bool own
 		} else if (! g.mw->qteLog->document()->isEmpty()) {
 			tc.insertBlock();
 		}
-		tc.insertHtml(Log::msgColor(QString::fromLatin1("[%1] ").arg(Qt::escape(dt.time().toString())), Log::Time));
+		tc.insertHtml(Log::msgColor(QString::fromLatin1("[%1] ").arg(Qt::escape(timestamp)), Log::Time));
 		validHtml(console, &tc);
 		tc.movePosition(QTextCursor::End);
 		g.mw->qteLog->setTextCursor(tc);
