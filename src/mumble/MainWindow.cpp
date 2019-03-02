@@ -1769,8 +1769,8 @@ void MainWindow::openTextMessageDialog(ClientUser *p) {
 			g.sh->sendUserTextMessage(p->uiSession, msg);
 			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true, timestamp);
             //QString hash = QString::fromStdString("Mumble");
-            g.db->addTable(host);
-            g.db->setMessage(host, msg, timestamp);
+            g.db->addTable(host, p->qsName);
+            g.db->setMessage(host, msg, p->qsName, timestamp);
 		}
 	}
 	delete texm;
@@ -1879,16 +1879,16 @@ void MainWindow::sendChatbarMessage(QString qsText) {
 		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
 			c = ClientUser::get(g.uiSession)->cChannel;
 
-        g.db->addTable(host);
+        g.db->addTable(host, c->qsName);
 		g.sh->sendChannelTextMessage(c->iId, qsText, false);
 		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), qsText), tr("Message to channel %1").arg(c->qsName), true, timestamp);
-        g.db->setMessage(host, qsText, timestamp); //INSERT BY MUMBLE TEAM
+        g.db->setMessage(host, qsText, c->qsName, timestamp); //INSERT BY MUMBLE TEAM
 	} else {
 		// User message
-        g.db->addTable(host);
+        g.db->addTable(host, c->qsName);
 		g.sh->sendUserTextMessage(p->uiSession, qsText);
 		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), qsText), tr("Message to %1").arg(p->qsName), true, timestamp);
-        g.db->setMessage(host, qsText, timestamp); //INSERT BY MUMBLE TEAM
+        g.db->setMessage(host, qsText, c->qsName, timestamp); //INSERT BY MUMBLE TEAM
 	}
 
 	qteChat->clear();
@@ -2862,7 +2862,7 @@ void MainWindow::serverConnected() {
     //::TextMessage *texm = new ::TextMessage(this, tr("Gamer: "));
 
     if(g.db->isTable(host)){
-        QList mess = g.db->getMessages(host);
+        QList mess = g.db->getMessages(host, root->qsName);
         for(int i = 0; i < mess.size(); i++) {
             g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
         }

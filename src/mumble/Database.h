@@ -34,13 +34,14 @@ class Database : public QObject {
 		void setPassword(const QString &host, unsigned short port, const QString &user, const QString &pw);
 		bool fuzzyMatch(QString &name, QString &user, QString &pw, QString &host, unsigned short port);
 
-        void setMessage(QString table, const QString &hash, QString time); //prototype (altered code by team MUTTER)
+        void setMessage(QString table, const QString &hash, QString col, QString time); //prototype (altered code by team MUTTER)
         //QList<QList> getMessages(QString table); //prototype (altered code by team MUTTER)
-		QList<QStringList> getMessages(QString table);
+        QList<QStringList> getMessages(QString table, QString col);
         //QList<QList<QString>> getMessages(QString table); //prototype (altered code by team MUTTER)
-        bool addTable(QString table);
+        bool addTable(QString table, QString col);
         bool isTable(QString table);
         QString mapTableName(QString table);
+        bool isColumnName(QString tableName, QString fieldName);
 
 		bool isLocalIgnored(const QString &hash);
 		void setLocalIgnored(const QString &hash, bool ignored);
