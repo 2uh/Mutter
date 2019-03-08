@@ -355,14 +355,19 @@ QList<QStringList> Database::getMessages(QString table, QString col) {
     QSqlQuery query(db);
 
     table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    if(table.at(0).isDigit()) {
+        table = mapTableName(table);
+    }
     QString queryString = QLatin1String("SELECT ") + col + QLatin1String(", `time` FROM '") + table + QLatin1String("'");
     execQueryAndLogFailure(query, queryString);
 
+    QStringList inner;
     while (query.next()) {
-    	QStringList inner;
-		inner << query.value(1).toString(); // timestamp (note: we still need to add the attribute for this in the table)
-        inner << query.value(0).toString(); // msg
-		outer.append(inner);
+        if(query.value(0).Size > 0) {
+            inner << query.value(1).toString(); // timestamp (note: we still need to add the attribute for this in the table)
+            inner << query.value(0).toString(); // msg
+            outer.append(inner);
+        }
     }
     return outer;
 }
