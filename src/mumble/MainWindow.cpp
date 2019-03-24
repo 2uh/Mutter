@@ -953,6 +953,7 @@ void MainWindow::findDesiredChannel() {
 	} else if (g.uiSession) {
 		qtvUsers->setCurrentIndex(pmModel->index(ClientUser::get(g.uiSession)->cChannel));
 	}
+
 	updateMenuPermissions();
 }
 
@@ -1768,7 +1769,6 @@ void MainWindow::openTextMessageDialog(ClientUser *p) {
         if (! msg.isEmpty()) {
 			g.sh->sendUserTextMessage(p->uiSession, msg);
 			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true, timestamp);
-            //QString hash = QString::fromStdString("Mumble");
             g.db->addTable(host, p->qsName);
             g.db->setMessage(host, msg, p->qsName, timestamp);
 		}
@@ -2861,12 +2861,13 @@ void MainWindow::serverConnected() {
     // POPULATE OLD CHAT MESSAGES
     //::TextMessage *texm = new ::TextMessage(this, tr("Gamer: "));
 
-    if(g.db->isTable(host)){
-        QList mess = g.db->getMessages(host, root->qsName);
-        for(int i = 0; i < mess.size(); i++) {
-            g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
-        }
-    }
+//    g.sh->getConnectionInfo(host, port, uname, pw);
+//    if(g.db->isTable(host)){
+//        QList mess = g.db->getMessages(host, root->qsName);
+//        for(int i = 0; i < mess.size(); i++) {
+//            g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Ar   gument 2"), true, mess.at(i).at(0));
+//        }
+//    }
     //delete texm;
 
 
@@ -3126,9 +3127,6 @@ void MainWindow::qtvUserCurrentChanged(const QModelIndex &, const QModelIndex &)
 void MainWindow::updateChatBar() {
 	User *p = pmModel->getUser(qtvUsers->currentIndex());
 	Channel *c = pmModel->getChannel(qtvUsers->currentIndex());
-    QString host, uname, pw;
-    unsigned short port;
-    g.sh->getConnectionInfo(host, port, uname, pw);
 
 	if (g.uiSession == 0) {
 		qteChat->setDefaultText(tr("<center>Not connected</center>"), true);
@@ -3136,24 +3134,10 @@ void MainWindow::updateChatBar() {
 		// Channel tree target
 		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
 			c = ClientUser::get(g.uiSession)->cChannel;
-
-        if(g.db->isTable(host)){
-            QList mess = g.db->getMessages(host, c->qsName);
-            for(int i = 0; i < mess.size(); i++) {
-                g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
-            }
-        }
-
 		qteChat->setDefaultText(tr("<center>Type message to channel '%1' here</center>").arg(Qt::escape(c->qsName)));
 	} else {
 		// User target
 		qteChat->setDefaultText(tr("<center>Type message to user '%1' here</center>").arg(Qt::escape(p->qsName)));
-        if(g.db->isTable(host)){
-            QList mess = g.db->getMessages(host, c->qsName);
-            for(int i = 0; i < mess.size(); i++) {
-                g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
-            }
-        }
 	}
 
 	updateMenuPermissions();

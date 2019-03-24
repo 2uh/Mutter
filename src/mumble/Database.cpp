@@ -251,6 +251,7 @@ bool Database::isLocalMuted(const QString &hash) {
 	return query.next();
 }
 
+//maps digit values to character value
 QString Database::mapTableName(QString table) {
     QString temp;
     QStringList map = { QLatin1String("A"), QLatin1String("B"), QLatin1String("C"), QLatin1String("D"), QLatin1String("E"), QLatin1String("F"), QLatin1String("G"), QLatin1String("H"), QLatin1String("I"), QLatin1String("J") };
@@ -267,8 +268,10 @@ QString Database::mapTableName(QString table) {
 //check if table exists in database
 bool Database::addTable(QString table, QString col) {
 
-    if(isTable(table))
+    if(isTable(table)) {
+        std::cout << table.toLocal8Bit().constData() << " table already exists" << std::endl;
         return true;
+    }
 
     table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
     col.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
@@ -342,7 +345,6 @@ bool Database::isTable(QString table) {
 
     for(int i = 0; i < tableNames.size(); i++) {
         if(QString::compare(tableNames.at(i), table) == 0) {
-            std::cout << table.toLocal8Bit().constData() << " table already exists" << std::endl;
             return true;
         }
     }
@@ -351,24 +353,39 @@ bool Database::isTable(QString table) {
 
 //get all information from message_log table
 QList<QStringList> Database::getMessages(QString table, QString col) {
-	QList<QStringList> outer;
     QSqlQuery query(db);
 
     table.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
+    col.replace(QRegExp(QString::fromStdString("[^A-Za-z0-9]+")), QString::fromStdString(""));
     if(table.at(0).isDigit()) {
         table = mapTableName(table);
     }
-    QString queryString = QLatin1String("SELECT ") + col + QLatin1String(", `time` FROM '") + table + QLatin1String("'");
+    if(col.at(0).isDigit() ) {
+        col = mapTableName(col);
+    }
+    QString queryString = QLatin1String("SELECT * FROM '") + table + QLatin1String("'");
     execQueryAndLogFailure(query, queryString);
 
+    QList<QStringList> outer;
     QStringList inner;
-    while (query.next()) {
-        if(query.value(0).Size > 0) {
-            inner << query.value(1).toString(); // timestamp (note: we still need to add the attribute for this in the table)
-            inner << query.value(0).toString(); // msg
-            outer.append(inner);
+    int count = 1;
+    int msgNum = query.record().indexOf(col);
+
+    if(query.isActive()) {
+        qDebug() << "Is Active";
+        while (query.next()) {
+            qDebug() << "ID: " << count << " Query ID: " << query.value(0).toInt();
+            //qDebug() << "Message " << query.value(msgNum).toString();
+            if(query.value(0).toInt() == count && query.value(msgNum).toString() != QLatin1String("")) {
+                inner << query.value(2).toString(); // timestamp (note: we still need to add the attribute for this in the table)
+                inner << query.value(msgNum).toString(); // msg
+                outer.append(inner);
+                inner.clear();
+            }
+            count++;
         }
     }
+
     return outer;
 }
 
