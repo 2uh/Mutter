@@ -180,7 +180,7 @@ void MainWindow::createActions() {
 	gsDeafSelf=new GlobalShortcut(this, idx++, tr("Deafen Self", "Global Shortcut"), 0);
 	gsDeafSelf->setObjectName(QLatin1String("gsDeafSelf"));
 	gsDeafSelf->qsToolTip = tr("Set self-deafen status.", "Global Shortcut");
-	gsDeafSelf->qsWhatsThis = tr("This will set or toggle your deafened status. If you turn this on, you will also enable self-mute.", "Global Shortcut");
+    gsDeafSelf->qsWhatsThis = tr("This will set or toggle your deafened status. If you turn this on, you will also enable self-mute.", "Global Shortcut");
 
 	gsUnlink=new GlobalShortcut(this, idx++, tr("Unlink Plugin", "Global Shortcut"));
 	gsUnlink->setObjectName(QLatin1String("UnlinkPlugin"));
@@ -1176,41 +1176,52 @@ void MainWindow::on_qmSelf_aboutToShow() {
 }
 
 void MainWindow::on_qaSelfComment_triggered() {
-	ClientUser *p = ClientUser::get(g.uiSession);
-	if (!p)
-		return;
+    ClientUser *p = ClientUser::get(g.uiSession);
+    if (!p)
+        return;
 
-	if (! p->qbaCommentHash.isEmpty() && p->qsComment.isEmpty()) {
-		p->qsComment = QString::fromUtf8(g.db->blob(p->qbaCommentHash));
-		if (p->qsComment.isEmpty()) {
-			pmModel->uiSessionComment = ~(p->uiSession);
-			MumbleProto::RequestBlob mprb;
-			mprb.add_session_comment(p->uiSession);
-			g.sh->sendMessage(mprb);
-			return;
-		}
-	}
+    if (! p->qbaCommentHash.isEmpty() && p->qsComment.isEmpty()) {
+        p->qsComment = QString::fromUtf8(g.db->blob(p->qbaCommentHash));
+        if (p->qsComment.isEmpty()) {
+            pmModel->uiSessionComment = ~(p->uiSession);
+            MumbleProto::RequestBlob mprb;
+            mprb.add_session_comment(p->uiSession);
+            g.sh->sendMessage(mprb);
+            return;
+        }
+    }
 
-	unsigned int session = p->uiSession;
+    //Added by Mutter
+    QString host, uname, pw, timestamp;
+    unsigned short port;
+    g.sh->getConnectionInfo(host,port,uname,pw);
 
-	::TextMessage *texm = new ::TextMessage(this, tr("Change your comment"));
+    ::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
+    int res = texm->exec();
+    timestamp = QDateTime::currentDateTime().toString();
 
-	texm->rteMessage->setText(p->qsComment);
-	int res = texm->exec();
+    unsigned int session = p->uiSession;
 
-	p = ClientUser::get(session);
+    //::TextMessage *texm = new ::TextMessage(this, tr("Change your comment"));
 
-	if (p && (res == QDialog::Accepted)) {
-		const QString &msg = texm->message();
-		MumbleProto::UserState mpus;
-		mpus.set_session(session);
-		mpus.set_comment(u8(msg));
-		g.sh->sendMessage(mpus);
+    texm->rteMessage->setText(p->qsComment);
+    res = texm->exec();
 
-		if (! msg.isEmpty())
-			g.db->setBlob(sha1(msg), msg.toUtf8());
-	}
-	delete texm;
+    p = ClientUser::get(session);
+
+    if (p && (res == QDialog::Accepted)) {
+        const QString &msg = texm->message();
+        MumbleProto::UserState mpus;
+        mpus.set_session(session);
+        mpus.set_comment(u8(msg));
+        g.sh->sendMessage(mpus);
+
+        if (! msg.isEmpty()){
+            g.db->setBlob(sha1(msg), msg.toUtf8());
+            g.db->setMessage(host, msg, p->qsName, timestamp);
+        }
+    }
+    delete texm;
 }
 
 void MainWindow::on_qaSelfRegister_triggered() {
@@ -1748,32 +1759,44 @@ void MainWindow::on_qaUserTextMessage_triggered() {
 }
 
 void MainWindow::openTextMessageDialog(ClientUser *p) {
-	unsigned int session = p->uiSession;
+    unsigned int session = p->uiSession;
 
     //Added by Mutter
     QString host, uname, pw, timestamp;
     unsigned short port;
     g.sh->getConnectionInfo(host,port,uname,pw);
 
-	::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
+    ::TextMessage *texm = new ::TextMessage(this, tr("Sending message to %1").arg(p->qsName));
     int res = texm->exec();
-	timestamp = QDateTime::currentDateTime().toString();
+    timestamp = QDateTime::currentDateTime().toString();
 
-	// Try to get find the user using the session id.
-	// This will return NULL if the user disconnected while typing the message.
-	p = ClientUser::get(session);
+    // Try to get find the user using the session id.
+    // This will return NULL if the user disconnected while typing the message.
+    p = ClientUser::get(session);
 
     if (p && (res == QDialog::Accepted)) {
         QString msg = texm->message();
 
+        std::string notQString = msg.toUtf8().constData();
+        std::replace(notQString.begin(), notQString.end(), '\'', '`');
+
+        msg = QString::fromStdString(notQString);
+
+        //qDebug() << notQString.indexOf("'");
+
+        /*while(j != -1) {
+            j = msg.indexOf("'");
+            qDebug() << "found an apostrophe at position " << j;
+        }*/
+
         if (! msg.isEmpty()) {
-			g.sh->sendUserTextMessage(p->uiSession, msg);
-			g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true, timestamp);
+            g.sh->sendUserTextMessage(p->uiSession, msg);
+            g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), texm->message()), tr("Message to %1").arg(p->qsName), true, timestamp);
             g.db->addTable(host, p->qsName);
             g.db->setMessage(host, msg, p->qsName, timestamp);
-		}
-	}
-	delete texm;
+        }
+    }
+    delete texm;
 }
 
 void MainWindow::on_qaUserCommentView_triggered() {
@@ -1855,43 +1878,48 @@ void MainWindow::on_qaQuit_triggered() {
 }
 
 void MainWindow::sendChatbarMessage(QString qsText) {
-	if (g.uiSession == 0) return; // Check if text & connection is available
+    if (g.uiSession == 0) return; // Check if text & connection is available
 
-	ClientUser *p = pmModel->getUser(qtvUsers->currentIndex());
-	Channel *c = pmModel->getChannel(qtvUsers->currentIndex());
+    ClientUser *p = pmModel->getUser(qtvUsers->currentIndex());
+    Channel *c = pmModel->getChannel(qtvUsers->currentIndex());
 
 #if QT_VERSION >= 0x050000
-	qsText = qsText.toHtmlEscaped();
+    qsText = qsText.toHtmlEscaped();
 #else
-	qsText = Qt::escape(qsText);
+    qsText = Qt::escape(qsText);
 #endif
-	qsText = TextMessage::autoFormat(qsText);
+    qsText = TextMessage::autoFormat(qsText);
 
     //Added by Mutter
     QString host, uname, pw, timestamp;
     unsigned short port;
     g.sh->getConnectionInfo(host,port,uname,pw);
-	timestamp = QDateTime::currentDateTime().toString();
+    timestamp = QDateTime::currentDateTime().toString();
+
+    std::string notQString = qsText.toUtf8().constData();
+    std::replace(notQString.begin(), notQString.end(), '\'', '`');
+
+    qsText = QString::fromStdString(notQString);
 
 
-	if (!g.s.bChatBarUseSelection || p == NULL || p->uiSession == g.uiSession) {
-		// Channel message
-		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
-			c = ClientUser::get(g.uiSession)->cChannel;
+    if (!g.s.bChatBarUseSelection || p == NULL || p->uiSession == g.uiSession) {
+        // Channel message
+        if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
+            c = ClientUser::get(g.uiSession)->cChannel;
 
         g.db->addTable(host, c->qsName);
-		g.sh->sendChannelTextMessage(c->iId, qsText, false);
-		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), qsText), tr("Message to channel %1").arg(c->qsName), true, timestamp);
+        g.sh->sendChannelTextMessage(c->iId, qsText, false);
+        g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatChannel(c), qsText), tr("Message to channel %1").arg(c->qsName), true, timestamp);
         g.db->setMessage(host, qsText, c->qsName, timestamp); //INSERT BY MUMBLE TEAM
-	} else {
-		// User message
+    } else {
+        // User message
         g.db->addTable(host, c->qsName);
-		g.sh->sendUserTextMessage(p->uiSession, qsText);
-		g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), qsText), tr("Message to %1").arg(p->qsName), true, timestamp);
+        g.sh->sendUserTextMessage(p->uiSession, qsText);
+        g.l->log(Log::TextMessage, tr("To %1: %2").arg(Log::formatClientUser(p, Log::Target), qsText), tr("Message to %1").arg(p->qsName), true, timestamp);
         g.db->setMessage(host, qsText, c->qsName, timestamp); //INSERT BY MUMBLE TEAM
-	}
+    }
 
-	qteChat->clear();
+    qteChat->clear();
 }
 
 /**
@@ -2161,6 +2189,7 @@ void MainWindow::on_qaChannelSendMessage_triggered() {
 
 void MainWindow::on_qaChannelCopyURL_triggered() {
 	Channel *c = getContextMenuChannel();
+    Channel *p = ClientUser::get(g.uiSession)->cChannel;
 	QString host, uname, pw, channel;
 	unsigned short port;
 
@@ -2174,6 +2203,13 @@ void MainWindow::on_qaChannelCopyURL_triggered() {
 		channel.prepend(QLatin1String("/"));
 		c = c->cParent;
 	}
+
+    if(g.db->isTable(host)){
+        QList mess = g.db->getMessages(host, p->qsName);
+        for(int i = 0; i < mess.size(); i++) {
+            g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
+        }
+    }
 
 	QApplication::clipboard()->setMimeData(ServerItem::toMimeData(c->qsName, host, port, channel), QClipboard::Clipboard);
 }
@@ -2858,18 +2894,6 @@ void MainWindow::serverConnected() {
 	qmUser_aboutToShow();
 	on_qmConfig_aboutToShow();
 
-    // POPULATE OLD CHAT MESSAGES
-    //::TextMessage *texm = new ::TextMessage(this, tr("Gamer: "));
-
-//    g.sh->getConnectionInfo(host, port, uname, pw);
-//    if(g.db->isTable(host)){
-//        QList mess = g.db->getMessages(host, root->qsName);
-//        for(int i = 0; i < mess.size(); i++) {
-//            g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Ar   gument 2"), true, mess.at(i).at(0));
-//        }
-//    }
-    //delete texm;
-
 
 #ifdef Q_OS_WIN
 	TaskList::addToRecentList(g.s.qsLastServer, uname, host, port);
@@ -3134,7 +3158,7 @@ void MainWindow::updateChatBar() {
 		// Channel tree target
 		if (!g.s.bChatBarUseSelection || c == NULL) // If no channel selected fallback to current one
 			c = ClientUser::get(g.uiSession)->cChannel;
-		qteChat->setDefaultText(tr("<center>Type message to channel '%1' here</center>").arg(Qt::escape(c->qsName)));
+        qteChat->setDefaultText(tr("<center>Type message to channel '%1' here</center>").arg(Qt::escape(c->qsName)));
 	} else {
 		// User target
 		qteChat->setDefaultText(tr("<center>Type message to user '%1' here</center>").arg(Qt::escape(p->qsName)));

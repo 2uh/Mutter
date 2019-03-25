@@ -369,13 +369,11 @@ QList<QStringList> Database::getMessages(QString table, QString col) {
     QList<QStringList> outer;
     QStringList inner;
     int count = 1;
-    int msgNum = query.record().indexOf(col);
-
     if(query.isActive()) {
-        qDebug() << "Is Active";
+        int msgNum = query.record().indexOf(col);
+        qDebug() << "Is Active Record";
         while (query.next()) {
-            qDebug() << "ID: " << count << " Query ID: " << query.value(0).toInt();
-            //qDebug() << "Message " << query.value(msgNum).toString();
+            qDebug() << query.value(0).toInt() << " " << query.value(msgNum).toString();
             if(query.value(0).toInt() == count && query.value(msgNum).toString() != QLatin1String("")) {
                 inner << query.value(2).toString(); // timestamp (note: we still need to add the attribute for this in the table)
                 inner << query.value(msgNum).toString(); // msg
@@ -385,7 +383,6 @@ QList<QStringList> Database::getMessages(QString table, QString col) {
             count++;
         }
     }
-
     return outer;
 }
 
