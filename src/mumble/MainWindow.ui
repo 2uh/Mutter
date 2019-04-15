@@ -28,11 +28,11 @@
   <property name="windowTitle">
    <string>Mutter</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
-  </property>
   <property name="autoFillBackground">
    <bool>true</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 57 11pt &quot;Terminus (TTF)&quot;;</string>
   </property>
   <property name="dockOptions">
    <set>QMainWindow::AllowNestedDocks|QMainWindow::AnimatedDocks</set>
@@ -90,7 +90,7 @@
      <x>0</x>
      <y>0</y>
      <width>513</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="qmConfig">
