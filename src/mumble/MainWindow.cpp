@@ -1997,6 +1997,7 @@ void MainWindow::qmChannel_aboutToShow() {
 	qmChannel->addAction(qaChannelUnlinkAll);
 	qmChannel->addSeparator();
 	qmChannel->addAction(qaChannelCopyURL);
+    qmChannel->addAction(qaChannelGetMessages);
 	qmChannel->addAction(qaChannelSendMessage);
 
 	// hiding the root is nonsense
@@ -2214,6 +2215,33 @@ void MainWindow::on_qaChannelCopyURL_triggered() {
 	QApplication::clipboard()->setMimeData(ServerItem::toMimeData(c->qsName, host, port, channel), QClipboard::Clipboard);
 }
 
+void MainWindow::on_qaChannelGetMessages_triggered() {
+    Channel *c = getContextMenuChannel();
+    Channel *p = ClientUser::get(g.uiSession)->cChannel;
+    QString host, uname, pw, channel;
+    unsigned short port;
+
+    if (!c)
+        return;
+
+    g.sh->getConnectionInfo(host, port, uname, pw);
+    // walk back up the channel list to build the URL.
+    while (c->cParent != NULL) {
+        channel.prepend(c->qsName);
+        channel.prepend(QLatin1String("/"));
+        c = c->cParent;
+    }
+
+    if(g.db->isTable(host)){
+        QList mess = g.db->getMessages(host, p->qsName);
+        for(int i = 0; i < mess.size(); i++) {
+            g.l->log(Log::TextMessage, mess.at(i).at(1), tr("Argument 2"), true, mess.at(i).at(0));
+        }
+    }
+
+    QApplication::clipboard()->setMimeData(ServerItem::toMimeData(c->qsName, host, port, channel), QClipboard::Clipboard);
+}
+
 /**
  * This function updates the UI according to the permission of the user in the current channel.
  * If possible the permissions are fetched from a cache. Otherwise they are requested by the server
@@ -2298,6 +2326,7 @@ void MainWindow::updateMenuPermissions() {
 	qaChannelUnlinkAll->setEnabled(p & (ChanACL::Write | ChanACL::LinkChannel));
 
 	qaChannelCopyURL->setEnabled(c);
+    qaChannelGetMessages->setEnabled(c);
 	qaChannelSendMessage->setEnabled(p & (ChanACL::Write | ChanACL::TextMessage));
 	qaChannelFilter->setEnabled(true);
 	qteChat->setEnabled(p & (ChanACL::Write | ChanACL::TextMessage));
