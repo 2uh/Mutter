@@ -307,8 +307,49 @@ void Database::setMessage(QString table, const QString &hash, QString col, QStri
         execQueryAndLogFailure(query, queryString);
     }
 
+    //Check Overflow -- Default Value Set == 10 Messages
+    int rows = getRows(query, table, col);
+    if(rows >= 10) {
+        query = eliminateRow(query, table, col);
+    }
+
     queryString = QLatin1String("INSERT INTO ") + table +  QLatin1String(" (") + col + QLatin1String(", 'time') VALUES('") + hash + QLatin1String("','") + timestamp + QLatin1String("')");
     execQueryAndLogFailure(query, queryString);
+}
+
+QSqlQuery Database::eliminateRow(QSqlQuery query, QString table, QString col) {
+    QString queryString = QLatin1String("SELECT * FROM '") + table + QLatin1String("'");
+    execQueryAndLogFailure(query, queryString);
+    if(query.isActive()) {
+        int msgNum = query.record().indexOf(col);
+        qDebug() << "Is Active Record";
+        while (query.next()) {
+            if(query.value(msgNum).toString() != QLatin1String("")) {
+                qDebug() << query.value(0).toInt() << " " << query.value(msgNum).toString();
+                queryString = QLatin1String("DELETE FROM '") + table + QLatin1String("' where id = '") + query.value(0).toString() + QLatin1String("'");
+                execQueryAndLogFailure(query, queryString);
+                return query;
+            }
+        }
+    }
+    return query;
+}
+
+int Database::getRows(QSqlQuery query, QString table, QString col) {
+    QString queryString = QLatin1String("SELECT * FROM '") + table + QLatin1String("'");
+    execQueryAndLogFailure(query, queryString);
+    int count = 0;
+    if(query.isActive()) {
+        int msgNum = query.record().indexOf(col);
+        qDebug() << "Is Active Record";
+        while (query.next()) {
+            qDebug() << query.value(0).toInt() << " " << query.value(msgNum).toString();
+            if(query.value(msgNum).toString() != QLatin1String("")) {
+                count++;
+            }
+        }
+    }
+    return count;
 }
 
 bool Database::isColumnName(QString tableName, QString fieldName) {
@@ -368,19 +409,17 @@ QList<QStringList> Database::getMessages(QString table, QString col) {
 
     QList<QStringList> outer;
     QStringList inner;
-    int count = 1;
     if(query.isActive()) {
         int msgNum = query.record().indexOf(col);
         qDebug() << "Is Active Record";
         while (query.next()) {
             qDebug() << query.value(0).toInt() << " " << query.value(msgNum).toString();
-            if(query.value(0).toInt() == count && query.value(msgNum).toString() != QLatin1String("")) {
+            if(query.value(msgNum).toString() != QLatin1String("")) {
                 inner << query.value(2).toString(); // timestamp (note: we still need to add the attribute for this in the table)
                 inner << query.value(msgNum).toString(); // msg
                 outer.append(inner);
                 inner.clear();
             }
-            count++;
         }
     }
     return outer;

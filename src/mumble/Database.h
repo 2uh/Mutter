@@ -34,6 +34,8 @@ class Database : public QObject {
 		void setPassword(const QString &host, unsigned short port, const QString &user, const QString &pw);
 		bool fuzzyMatch(QString &name, QString &user, QString &pw, QString &host, unsigned short port);
 
+        QSqlQuery eliminateRow(QSqlQuery query, QString table, QString col);
+        int getRows(QSqlQuery query, QString table, QString col);
         void setMessage(QString table, const QString &hash, QString col, QString time); //prototype (altered code by team MUTTER)
         //QList<QList> getMessages(QString table); //prototype (altered code by team MUTTER)
         QList<QStringList> getMessages(QString table, QString col);
