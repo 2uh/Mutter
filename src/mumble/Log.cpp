@@ -104,6 +104,8 @@ void LogConfig::load(const Settings &r) {
 	}
 
 	qsbMaxBlocks->setValue(r.iMaxLogBlocks);
+    qsbMaxMessages->setValue(g.getMessageMax);
+    qDebug() << g.getMessageMax;
 
 #ifdef USE_NO_TTS
 	qtwMessages->hideColumn(ColTTS);
@@ -137,6 +139,9 @@ void LogConfig::save() const {
 		s.qmMessageSounds[mt] = i->text(ColStaticSoundPath);
 	}
 	s.iMaxLogBlocks = qsbMaxBlocks->value();
+    s.iMaxMessages = qsbMaxMessages->value();
+    g.getMessageMax = qsbMaxMessages->value();
+    qDebug() << "g.getMessageMax upon save is " << g.getMessageMax;
 
 #ifndef USE_NO_TTS
 	s.iTTSVolume=qsVolume->value();

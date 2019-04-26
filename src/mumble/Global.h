@@ -61,6 +61,7 @@ public:
 	int iPushToTalk;
 	Timer tDoublePush;
 	quint64 uiDoublePush;
+    int getMessageMax;
 	int iTarget;
 	int iPrevTarget;
 	bool bPushToMute;

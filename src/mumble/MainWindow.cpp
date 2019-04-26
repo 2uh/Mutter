@@ -2205,7 +2205,8 @@ void MainWindow::on_qaChannelCopyURL_triggered() {
 		c = c->cParent;
 	}
 
-    int messageCount = 5;
+    int messageCount = g.getMessageMax;
+    qDebug() << "message count is " << g.getMessageMax;
     int i = 0;
     if(g.db->isTable(host)){
         QList mess = g.db->getMessages(host, p->qsName);

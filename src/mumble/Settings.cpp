@@ -400,6 +400,7 @@ Settings::Settings() {
 	requireRestartToApply = false;
 
 	iMaxLogBlocks = 0;
+    iMaxMessages = 5;
 
 	bShortcutEnable = true;
 	bSuppressMacEventTapWarning = false;
@@ -1094,6 +1095,7 @@ void Settings::save() {
 	SAVELOAD(bShowTransmitModeComboBox, "ui/transmitmodecombobox");
 	SAVELOAD(bHighContrast, "ui/HighContrast");
 	SAVELOAD(iMaxLogBlocks, "ui/MaxLogBlocks");
+    SAVELOAD(iMaxMessages, "ui/MaxMessages");
 
 	// PTT Button window
 	SAVELOAD(bShowPTTButtonWindow, "ui/showpttbuttonwindow");

@@ -83,6 +83,7 @@ Global::Global() {
 	iAudioPathTime = 0;
 	iAudioBandwidth = -1;
 	iMaxBandwidth = -1;
+    getMessageMax = 5;
 
 	iCodecAlpha = 0;
 	iCodecBeta = 0;
